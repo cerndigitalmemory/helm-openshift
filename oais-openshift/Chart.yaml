@@ -1,0 +1,5 @@
+apiVersion: v2
+name: oais-openshift
+description: Digital Memory Platform
+type: application
+version: 0.0.0

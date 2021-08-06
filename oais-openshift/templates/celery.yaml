@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: celery
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: celery
+  template:
+    metadata:
+      labels:
+        app: celery
+    spec:
+      containers:
+        - name: celery
+          image: {{ .Values.oais.image }}
+          envFrom:
+            - configMapRef:
+                name: env
+          env:
+            - name: POSTGRESQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: oais-secrets
+                  key: POSTGRESQL_PASSWORD
+            - name: OIDC_RP_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oais-secrets
+                  key: OIDC_RP_CLIENT_SECRET
+          command: ["celery"]
+          args: ["-A",  "oais_platform.celery",  "worker", "-l", "INFO"]
+          volumeMounts:
+            - mountPath: /oais-platform/oais_platform/local_settings
+              name: oais-platform-config
+              readOnly: true
+          imagePullPolicy: Always
+      volumes:
+        - name: oais-platform-config
+          configMap:
+            name: oais-platform-config
+      restartPolicy: Always

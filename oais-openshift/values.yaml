@@ -1,0 +1,10 @@
+oais:
+  hostname: test-dm-openshift.web.cern.ch
+  image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais:latest
+
+oidc:
+  clientId: dm-test
+
+postgres:
+  db: oais_db
+  user: oais
