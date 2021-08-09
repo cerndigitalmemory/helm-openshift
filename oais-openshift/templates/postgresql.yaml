@@ -58,6 +58,4 @@ spec:
   resources:
     requests:
       storage: {{ .Values.postgres.storage }}
-  {{- if .Values.postgres.storageClassName }}
   storageClassName: {{ .Values.postgres.storageClassName }}
-  {{- end }}

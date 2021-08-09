@@ -9,4 +9,4 @@ postgres:
   db: oais_db
   user: oais
   storage: 5Gi
-# storageClassName: default
+  storageClassName: cephfs
