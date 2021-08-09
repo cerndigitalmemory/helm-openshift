@@ -55,6 +55,8 @@ metadata:
 spec:
   accessModes:
     - ReadWriteOnce
+    - ReadWriteMany
+    - ReadOnlyMany
   resources:
     requests:
       storage: {{ .Values.postgres.storage }}
