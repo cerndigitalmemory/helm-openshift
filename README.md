@@ -71,6 +71,22 @@ After changing any configuration file, update the configuration on the cluster
 helm upgrade <release-name> ./oais-openshift
 ```
 
+## Continuous Deployment
+
+Create a new service account
+
+```bash
+oc create sa gitlab-ci
+```
+
+Grant edit permissions to the new service account
+
+```bash
+oc policy add-role-to-user edit -z gitlab-ci
+```
+
+The API token to be used from the CI/CD pipeline is automatically generated and saved in the secrets
+
 ## TODO
 
 - Use persistent volume to store PostgreSQL data

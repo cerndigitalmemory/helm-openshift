@@ -14,3 +14,23 @@ build-docker-image:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_NAME:latest --destination $IMAGE_NAME:$CI_COMMIT_SHA
     - echo "Image pushed to ${IMAGE_NAME}:latest and ${IMAGE_NAME}:$CI_COMMIT_SHA"
+
+deploy-dev:
+  stage: deploy
+  image: ubuntu:20.04
+  script:
+    - apt-get update
+    - apt-get install -y curl
+    # Download OpenShift client
+    - curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.8.4/openshift-client-linux.tar.gz -o oc.tar.gz
+    - tar -xf oc.tar.gz
+    - mv ./oc /usr/bin/oc
+    # Download Helm
+    - curl https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz -o helm.tar.gz
+    - tar -xf helm.tar.gz
+    - mv ./linux-amd64/helm /usr/bin/helm
+    # Login
+    - oc login "$DEV_OPENSHIFT_SERVER" --token="$DEV_OPENSHIFT_TOKEN"
+    - oc project "$DEV_OPENSHIFT_PROJECT"
+    # Upgrade
+    - helm upgrade "$DEV_HELM_NAME" ./oais-openshift --install
