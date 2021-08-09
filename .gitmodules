@@ -1,0 +1,6 @@
+[submodule "oais-web"]
+	path = oais-web
+	url = https://gitlab.cern.ch/digitalmemory/oais-web.git
+[submodule "oais-platform"]
+	path = oais-platform
+	url = https://gitlab.cern.ch/digitalmemory/oais-platform.git

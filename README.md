@@ -11,7 +11,7 @@
 Clone this repository and change the working directory
 
 ```bash
-git clone https://gitlab.cern.ch/digitalmemory/openshift-deploy.git
+git clone --recurse-submodules https://gitlab.cern.ch/digitalmemory/openshift-deploy.git
 cd openshift-deploy
 ```
 
@@ -22,10 +22,6 @@ You can use the `gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais` do
 Otherwise, you can build the docker image using the provided Dockerfile
 
 ```bash
-# Clone the platform repositories
-git clone https://gitlab.cern.ch/digitalmemory/oais-platform.git
-git clone https://gitlab.cern.ch/digitalmemory/oais-web.git
-
 # Build the docker image
 docker build --tag <name> .
 
