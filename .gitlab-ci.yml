@@ -12,7 +12,7 @@ build-docker-image:
     entrypoint: [""]
   script:
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_NAME:latest --destination $IMAGE_NAME:$CI_COMMIT_SHA
+    - /kaniko/executor --cache=true --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile --destination $IMAGE_NAME:latest --destination $IMAGE_NAME:$CI_COMMIT_SHA
     - echo "Image pushed to ${IMAGE_NAME}:latest and ${IMAGE_NAME}:$CI_COMMIT_SHA"
 
 deploy-dev:
