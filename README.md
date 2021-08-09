@@ -89,6 +89,6 @@ The API token to be used from the CI/CD pipeline is automatically generated and 
 
 ## TODO
 
-- Use persistent volume to store PostgreSQL data
+- Add support for external PostgreSQL instance (e.g. to use CERN DBoD)
 - Use uWSGI instead of development server
 - Configure probes
