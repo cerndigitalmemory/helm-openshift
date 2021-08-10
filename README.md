@@ -87,6 +87,11 @@ oc policy add-role-to-user edit -z gitlab-ci
 
 The API token to be used from the CI/CD pipeline is automatically generated and saved in the secrets
 
+### Current configuration
+Whenever new commits are pushed to `oais-web` or `oais-platform`, the pipeline on `openshift-deployment` is triggered to make a new deployment.
+This pipeline creates a new commit on `openshift-deployment` that updates the submodules in the repository.
+After the commit is pushed, the docker image is rebuilt and the configuration is deployed on OpenShift.
+
 ## TODO
 
 - Add support for external PostgreSQL instance (e.g. to use CERN DBoD)
