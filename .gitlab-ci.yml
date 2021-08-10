@@ -15,11 +15,13 @@ push-update:
   script:
     - apt-get update
     - apt-get install -y git
-    - git clone "https://gitlab-ci:${GIT_ACCESS_TOKEN}@gitlab.cern.ch/digitalmemory/openshift-deploy.git"
+    - cd /tmp
+    - git clone --recurse-submodules "https://gitlab-ci:${GIT_ACCESS_TOKEN}@gitlab.cern.ch/digitalmemory/openshift-deploy.git"
     - cd openshift-deploy
     - git config user.name "GitLab CI"
     - git config user.email "ci@gitlab.cern.ch"
-    - git submodule update --remote
+    - git submodule foreach git checkout main
+    - git submodule foreach git pull
     - git commit -am "Updating submodules" || true
     - git push
 
