@@ -1,10 +1,34 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
+stages:
+  - update
+  - build
+  - deploy
+
+push-update:
+  stage: update
+  image: ubuntu:20.04
+  # Only execute this job when the pipeline is triggered by the upstream repositories
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "pipeline"'
+  script:
+    - apt-get update
+    - apt-get install -y git
+    - git clone "https://gitlab-ci:${GIT_ACCESS_TOKEN}@gitlab.cern.ch/digitalmemory/openshift-deploy.git"
+    - cd openshift-deploy
+    - git config user.name "GitLab CI"
+    - git config user.email "ci@gitlab.cern.ch"
+    - git submodule update --remote
+    - git commit -am "Updating submodules" || true
+    - git push
+
 # Build and publish docker image using Kaniko.
 # From https://gitlab.cern.ch/gitlabci-examples/build_docker_image/
 build-docker-image:
   stage: build
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
   variables:
     IMAGE_NAME: ${CI_REGISTRY_IMAGE}/oais
   image:
@@ -17,6 +41,8 @@ build-docker-image:
 
 deploy-dev:
   stage: deploy
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "push"'
   image: ubuntu:20.04
   script:
     - apt-get update
