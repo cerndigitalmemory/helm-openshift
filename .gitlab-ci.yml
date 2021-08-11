@@ -1,5 +1,6 @@
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  IMAGE_NAME: ${CI_REGISTRY_IMAGE}/oais
 
 stages:
   - update
@@ -31,8 +32,6 @@ build-docker-image:
   stage: build
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push"'
-  variables:
-    IMAGE_NAME: ${CI_REGISTRY_IMAGE}/oais
   image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
@@ -61,4 +60,6 @@ deploy-dev:
     - oc login "$DEV_OPENSHIFT_SERVER" --token="$DEV_OPENSHIFT_TOKEN"
     - oc project "$DEV_OPENSHIFT_PROJECT"
     # Upgrade
-    - helm upgrade "$DEV_HELM_NAME" ./oais-openshift --install
+    - >-
+      helm upgrade "$DEV_HELM_NAME" ./oais-openshift --install
+      --set oais.image=${IMAGE_NAME}:${CI_COMMIT_SHA}
