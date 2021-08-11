@@ -5,6 +5,10 @@ oais:
 oidc:
   clientId: dm-test
 
+redis:
+  storage: 2Gi
+  storageClassName: cephfs
+
 postgres:
   db: oais_db
   user: oais
