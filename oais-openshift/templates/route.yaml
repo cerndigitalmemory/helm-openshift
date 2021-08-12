@@ -1,3 +1,4 @@
+{{- if .Values.route.enabled }}
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
@@ -10,8 +11,11 @@ spec:
     weight: 1
   port:
     targetPort: 8080
+  {{- if .Values.route.tls }}
   tls:
     insecureEdgeTerminationPolicy: Redirect
     termination: edge
+  {{- end }}
 status:
     ingress: []
+{{- end }}

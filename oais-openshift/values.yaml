@@ -18,3 +18,7 @@ postgres:
     enabled: true
     size: 5Gi
     storageClass: cephfs
+
+route:
+  enabled: true
+  tls: true
