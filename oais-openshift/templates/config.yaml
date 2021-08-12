@@ -6,7 +6,11 @@ data:
   __init__.py: |
     import os
 
+    {{- if .Values.oais.checkHostname }}
     ALLOWED_HOSTS = [ {{ .Values.oais.hostname | quote }} ]
+    {{- else }}
+    ALLOWED_HOSTS = [ "*" ]
+    {{- end }}
 
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -41,7 +45,11 @@ data:
     server {
       listen 8080;
 
+      {{- if .Values.oais.checkHostname }}
       server_name {{ .Values.oais.hostname }};
+      {{- else }}
+      server_name _;
+      {{- end }}
 
       root /shared-assets;
 

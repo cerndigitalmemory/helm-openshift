@@ -1,4 +1,5 @@
 oais:
+  checkHostname: true
   hostname: test-dm-openshift.web.cern.ch
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais:latest
 
