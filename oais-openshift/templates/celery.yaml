@@ -11,6 +11,9 @@ spec:
     metadata:
       labels:
         app: celery
+      annotations:
+      {{- include "oais.env-checksum" . | indent 8 }}
+      {{- include "oais.config-checksum" . | indent 8 }}
     spec:
       containers:
         - name: celery

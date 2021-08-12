@@ -26,6 +26,8 @@ spec:
     metadata:
       labels:
         app: postgres
+      annotations:
+      {{- include "oais.env-checksum" . | indent 8 }}
     spec:
       containers:
         - name: postgres

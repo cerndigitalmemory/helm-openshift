@@ -24,6 +24,9 @@ spec:
     metadata:
       labels:
         app: oais-platform
+      annotations:
+      {{- include "oais.env-checksum" . | indent 8 }}
+      {{- include "oais.config-checksum" . | indent 8 }}
     spec:
       containers:
         - name: oais-platform
