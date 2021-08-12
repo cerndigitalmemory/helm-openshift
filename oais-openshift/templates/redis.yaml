@@ -37,14 +37,21 @@ spec:
               name: redis-data
       volumes:
         - name: redis-data
+          {{- if .Values.redis.persistence.enabled }}
           persistentVolumeClaim:
             claimName: redis-pvc
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
       restartPolicy: Always
 ---
+{{- if .Values.redis.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: redis-pvc
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
     - ReadWriteOnce
@@ -52,5 +59,6 @@ spec:
     - ReadOnlyMany
   resources:
     requests:
-      storage: {{ .Values.redis.storage }}
-  storageClassName: {{ .Values.redis.storageClassName }}
+      storage: {{ .Values.redis.persistence.size }}
+  storageClassName: {{ .Values.redis.persistence.storageClass }}
+{{- end }}

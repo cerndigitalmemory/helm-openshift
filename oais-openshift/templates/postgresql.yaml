@@ -46,14 +46,21 @@ spec:
               name: postgres-data
       volumes:
         - name: postgres-data
+          {{- if .Values.postgres.persistence.enabled }}
           persistentVolumeClaim:
             claimName: postgres-pvc
+          {{- else }}
+          emptyDir: {}
+          {{- end }}
       restartPolicy: Always
 ---
+{{- if .Values.postgres.persistence.enabled }}
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: postgres-pvc
+  annotations:
+    "helm.sh/resource-policy": keep
 spec:
   accessModes:
     - ReadWriteOnce
@@ -61,5 +68,6 @@ spec:
     - ReadOnlyMany
   resources:
     requests:
-      storage: {{ .Values.postgres.storage }}
-  storageClassName: {{ .Values.postgres.storageClassName }}
+      storage: {{ .Values.postgres.persistence.size }}
+  storageClassName: {{ .Values.postgres.persistence.storageClass }}
+{{- end }}
