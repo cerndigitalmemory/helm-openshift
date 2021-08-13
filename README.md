@@ -88,12 +88,28 @@ oc policy add-role-to-user edit -z gitlab-ci
 The API token to be used from the CI/CD pipeline is automatically generated and saved in the secrets
 
 ### Current configuration
+
 Whenever new commits are pushed to `oais-web` or `oais-platform`, the pipeline on `openshift-deployment` is triggered to make a new deployment.
 This pipeline creates a new commit on `openshift-deployment` that updates the submodules in the repository.
 After the commit is pushed, the docker image is rebuilt and the configuration is deployed on OpenShift.
 
+## Local deployment on Kubernetes
+
+You can test the deployment locally using k8s (e.g. with minikube) by setting the following values in `oais-openshift/values.yaml`:
+
+- `oais.checkHostname: false`
+- `redis.persistence.enabled: false`
+- `postgres.persistence.enabled: false`
+- `route.enabled: false`
+
+To access the control interface, add `type: NodePort` to `spec` in the `oais-platform` service and then visit the URL given by
+```bash
+minikube service --url oais-platform
+```
+
 ## TODO
 
+- Add Django `SECRET_KEY` to the secrets
 - Add support for external PostgreSQL instance (e.g. to use CERN DBoD)
-- Use uWSGI instead of development server
+- Use gunicorn instead of the development server
 - Configure probes
