@@ -28,12 +28,15 @@ data:
       }
     }
 
+    STATIC_ROOT="/assets/static/"
+
     __all__ = [
       "ALLOWED_HOSTS",
       "DATABASES",
       "DEBUG",
       "LOGIN_REDIRECT_URL",
-      "SECURE_PROXY_SSL_HEADER"
+      "SECURE_PROXY_SSL_HEADER",
+      "STATIC_ROOT"
     ]
 ---
 apiVersion: v1
