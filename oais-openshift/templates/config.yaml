@@ -6,6 +6,8 @@ data:
   __init__.py: |
     import os
 
+    SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+
     {{- if .Values.oais.checkHostname }}
     ALLOWED_HOSTS = [ {{ .Values.oais.hostname | quote }} ]
     {{- else }}
@@ -36,7 +38,8 @@ data:
       "DEBUG",
       "LOGIN_REDIRECT_URL",
       "SECURE_PROXY_SSL_HEADER",
-      "STATIC_ROOT"
+      "STATIC_ROOT",
+      "SECRET_KEY"
     ]
 ---
 apiVersion: v1

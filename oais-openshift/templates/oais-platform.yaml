@@ -39,17 +39,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: env
-          env:
-            - name: POSTGRESQL_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: oais-secrets
-                  key: POSTGRESQL_PASSWORD
-            - name: OIDC_RP_CLIENT_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: oais-secrets
-                  key: OIDC_RP_CLIENT_SECRET
+            - secretRef:
+                name: oais-secrets
           ports:
             - containerPort: 8000
           volumeMounts:

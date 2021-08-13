@@ -52,6 +52,7 @@ Create a new OpenShift secret for the PostgreSQL password and the client secret 
 oc create secret generic \
   --from-literal="POSTGRESQL_PASSWORD=<password>" \
   --from-literal="OIDC_RP_CLIENT_SECRET=<secret>" \
+  --from-literal="DJANGO_SECRET_KEY=<secret key>" \
   oais-secrets
 ```
 
@@ -109,7 +110,6 @@ minikube service --url oais-platform
 
 ## TODO
 
-- Add Django `SECRET_KEY` to the secrets
 - Add support for external PostgreSQL instance (e.g. to use CERN DBoD)
 - Use gunicorn instead of the development server
 - Configure probes
