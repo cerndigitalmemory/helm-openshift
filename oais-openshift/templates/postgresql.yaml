@@ -71,5 +71,5 @@ spec:
   resources:
     requests:
       storage: {{ .Values.postgres.persistence.size }}
-  storageClassName: {{ .Values.postgres.persistence.storageClass }}
+  storageClassName: cephfs
 {{- end }}

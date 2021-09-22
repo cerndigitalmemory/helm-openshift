@@ -26,11 +26,10 @@ data:
         "NAME": os.environ["POSTGRESQL_DATABASE"],
         "USER": os.environ["POSTGRESQL_USER"],
         "PASSWORD": os.environ["POSTGRESQL_PASSWORD"],
-        "HOST": "postgres",
       }
     }
 
-    STATIC_ROOT="/assets/static/"
+    STATIC_ROOT="/shared-assets/static/"
 
     __all__ = [
       "ALLOWED_HOSTS",

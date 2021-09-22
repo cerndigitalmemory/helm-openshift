@@ -17,11 +17,12 @@ cd openshift-deploy
 
 ## Docker image
 
-You can use the `gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais` docker image.
-
-Otherwise, you can build the docker image using the provided Dockerfile
+You can use the image uploaded in this repository Docker registry or build one using the provided Dockerfile.
 
 ```bash
+# Use the image from this repository registry
+docker run gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais
+
 # Build the docker image
 docker build --tag <name> .
 

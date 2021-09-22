@@ -1,12 +1,7 @@
 oais:
   checkHostname: true
-  hostname: test-dm-openshift.web.cern.ch
-  image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/master/oais:latest
-
-kostas-chelakis:
-  checkHostname: true
   hostname: dm-test1-kostas-chelakis.app.cern.ch
-  image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/develop/oais:latest
+  image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_master:latest
 
 oidc:
   clientId: dm-test

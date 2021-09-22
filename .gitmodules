@@ -1,6 +1,16 @@
-[submodule "oais-web"]
-	path = oais-web
+[submodule "develop/oais-web"]
+	path = develop/oais-web
 	url = https://gitlab.cern.ch/digitalmemory/oais-web.git
-[submodule "oais-platform"]
-	path = oais-platform
+	branch = develop
+[submodule "develop/oais-platform"]
+	path = develop/oais-platform
 	url = https://gitlab.cern.ch/digitalmemory/oais-platform.git
+	branch = develop
+[submodule "master/oais-web"]
+	path = master/oais-web
+	url = https://gitlab.cern.ch/digitalmemory/oais-web.git
+	branch = main
+[submodule "master/oais-platform"]
+	path = master/oais-platform
+	url = https://gitlab.cern.ch/digitalmemory/oais-platform.git
+	branch = main

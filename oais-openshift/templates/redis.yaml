@@ -60,5 +60,5 @@ spec:
   resources:
     requests:
       storage: {{ .Values.redis.persistence.size }}
-  storageClassName: {{ .Values.redis.persistence.storageClass }}
+  storageClassName: cephfs-ssd
 {{- end }}
