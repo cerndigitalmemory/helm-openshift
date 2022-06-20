@@ -29,7 +29,7 @@ push-update:
 
 # Build and publish docker image using Kaniko.
 # From https://gitlab.cern.ch/gitlabci-examples/build_docker_image/
-build-docker-image:
+build-docker-dev:
   stage: build
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push"'
@@ -37,10 +37,9 @@ build-docker-image:
     name: gitlab-registry.cern.ch/ci-tools/docker-image-builder
     entrypoint: [""]
   script:
-    - echo "Commit branch is $CI_COMMIT_BRANCH, Context file is $CI_PROJECT_DIR/$CI_COMMIT_BRANCH and dockerfile is in $CI_PROJECT_DIR/$CI_COMMIT_BRANCH/Dockerfile"
+    - echo "Commit branch is $CI_COMMIT_BRANCH, Context file is $CI_PROJECT_DIR/$CI_COMMIT_BRANCH and dockerfile is in $CI_PROJECT_DIR/Dockerfile"
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"$CI_REGISTRY_USER\",\"password\":\"$CI_REGISTRY_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --cache=true --context $CI_PROJECT_DIR/master --dockerfile $CI_PROJECT_DIR/Dockerfile --destination "${IMAGE_NAME}_master":latest --destination "${IMAGE_NAME}_master":$CI_COMMIT_SHA
-    - /kaniko/executor --cache=true --context $CI_PROJECT_DIR/develop --dockerfile $CI_PROJECT_DIR/Dockerfile --destination "${IMAGE_NAME}_dev":latest --destination "${IMAGE_NAME}_dev":$CI_COMMIT_SHA
+    - /kaniko/executor --cache=false --context $CI_PROJECT_DIR/develop --dockerfile $CI_PROJECT_DIR/Dockerfile --destination "${IMAGE_NAME}_dev":latest --destination "${IMAGE_NAME}_dev":$CI_COMMIT_SHA
     - echo "Image pushed to ${IMAGE_NAME}:latest and ${IMAGE_NAME}:$CI_COMMIT_SHA"
 
 deploy-dev:
@@ -66,6 +65,3 @@ deploy-dev:
     - >-
       helm upgrade -f ./develop/values.yaml "$DEV_HELM_NAME" ./oais-openshift --install
       --set oais.image="${IMAGE_NAME}_dev":${CI_COMMIT_SHA}
-    - oc project dm123
-    - helm upgrade -f ./master/values.yaml "$DEV_HELM_NAME" ./oais-openshift --install
-      --set oais.image="${IMAGE_NAME}_master":${CI_COMMIT_SHA}
