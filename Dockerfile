@@ -44,5 +44,5 @@ RUN apk add --no-cache postgresql-libs && \
     pip install -r requirements.txt --no-cache-dir && \
     apk --purge del .build-deps
 COPY ./oais-platform .
-COPY --from=frontend /oais-web/public /assets
+COPY --from=frontend /oais-web/public /shared-assets
 CMD ["sh", "-c", "python3 manage.py migrate && python3 manage.py runserver"]
