@@ -1,4 +1,4 @@
-FROM node:16 AS frontend
+FROM node:16-alpine AS frontend
 WORKDIR /oais-web
 COPY ./oais-web .
 RUN apk add git && \
