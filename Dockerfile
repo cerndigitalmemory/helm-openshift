@@ -1,8 +1,8 @@
-FROM node:16-alpine AS frontend
+FROM node:18-alpine AS frontend
 WORKDIR /oais-web
 COPY ./oais-web .
-RUN apk add git && \
-    npm install -g npm && npm install --force && npm run build
+RUN apk add git --update && \
+    npm i npm@6.13.6 --global && npm install --force && npm run build
 
 FROM python:3.7-alpine
 ENV PYTHONUNBUFFERED 1

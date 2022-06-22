@@ -61,7 +61,7 @@ deploy-dev:
     # Login
     - oc login --server="$DEV_OPENSHIFT_SERVER" --token="$DEV_OPENSHIFT_TOKEN"
     # Upgrade
-    - oc project test-dm-openshift
+    - oc project dm-luteus
     - >-
       helm upgrade -f ./develop/values.yaml "$DEV_HELM_NAME" ./oais-openshift --install
       --set oais.image="${IMAGE_NAME}_dev":${CI_COMMIT_SHA}
