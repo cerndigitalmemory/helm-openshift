@@ -20,12 +20,23 @@ data:
 
     LOGIN_REDIRECT_URL = "/#/login/callback"
 
+    DATABASES = {
+      "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.environ["POSTGRESQL_DATABASE"],
+        "USER": os.environ["POSTGRESQL_USER"],
+        "PASSWORD": os.environ["POSTGRESQL_PASSWORD"],
+        "HOST": os.environ["DB_HOST"],
+      }
+    }
+
     __all__ = [
       "ALLOWED_HOSTS",
       "DEBUG",
       "LOGIN_REDIRECT_URL",
       "SECURE_PROXY_SSL_HEADER",
-      "SECRET_KEY"
+      "SECRET_KEY",
+      "DATABASES"
     ]
 ---
 apiVersion: v1

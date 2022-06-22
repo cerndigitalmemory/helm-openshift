@@ -6,6 +6,17 @@
 - OpenShift Client
 - Docker (if building the image from source)
 
+```bash
+# Download the OpenShift CLI client
+curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.8.4/openshift-client-linux.tar.gz -o oc.tar.gz
+tar -xf oc.tar.gz
+sudo mv ./oc /usr/bin/oc
+# Download Helm
+curl https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz -o helm.tar.gz
+tar -xf helm.tar.gz
+sudo mv ./linux-amd64/helm /usr/bin/helm
+```
+
 ## Clone the repository
 
 Clone this repository and change the working directory
@@ -30,39 +41,71 @@ docker build --tag <name> .
 docker push <name>
 ```
 
-## Customize the settings
 
-Based on your deploy, change the settings in `./oais-openshift/values.yaml`
+# Deploy on OpenShift
 
-## Deploy
+## Preliminar notes
+
+To enable CERN SSO, you should:
+
+- Create an Application at <https://application-portal.web.cern.ch>
+- Select the application and create a new "Open ID Connect (OIDC)" CERN SSO Registration
+- Fill in the values considering that the final exposed Base URL will be `<openshift_project_name>.web.cern.ch`
+- Note the client secret (`OIDC_RP_CLIENT_SECRET`) and the **Client ID**.
+
+More information can be found [here](https://auth.docs.cern.ch/user-documentation/oidc/oidc/).
+
+## Create an OpenShift project
+
+Go to https://paas.cern.ch and create a project. Note the **project name**. On the OpenShift panel, go to your user click "copy login command" and note:
+
+- Your auth **token**
+- The OpenShift cluster API **endpoint** (should be `https://api.paas.okd.cern.ch/`)
 
 ### Login
 
-Login and select the right project. To login, you can copy the login command directly from the OpenShift dashboard.
+Login and select the desired project. To login, you can copy the login command directly from the OpenShift dashboard.
 
 ```bash
-oc login <url-to-openshift-cluster>
+oc login --token=<token> --server=https://api.paas.okd.cern.ch
 oc project <project>
 ```
 
 ### Secrets
 
-Create a new OpenShift secret for the PostgreSQL password and the client secret used by OpenID Connect
+We will need to set some secrets for the Django project.
 
 ```bash
 oc create secret generic \
   --from-literal="POSTGRESQL_PASSWORD=<password>" \
-  --from-literal="OIDC_RP_CLIENT_SECRET=<secret>" \
   --from-literal="DJANGO_SECRET_KEY=<secret key>" \
+  --from-literal="OIDC_RP_CLIENT_SECRET=<secret>" \
   oais-secrets
 ```
+
+| Secret name           | Description                                                                     |
+|-----------------------|---------------------------------------------------------------------------------|
+| POSTGRESQL_PASSWORD   | Passphrase to login to Postgres. Set as you prefer, but long and safe strings.  |
+| DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                   |
+| OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                            |
+
+### Configuration
+
+Now, let's set some more variables by editing the `values.yaml` file. An example is found in `oais-openshift/values.yaml`.
+
+| Name                  | Description                                                                     |
+|-----------------------|---------------------------------------------------------------------------------|
+| oais/hostname         | Should be set to <openshift_project_name>.web.cern.ch                           |
+| oais/image            | Set as you prefer, but long and safe strings.                                   |
+| oidc/clientId         | From your registered CERN Application, for CERN SSO.                            |
+
 
 ### Install
 
 Deploy the platform on the cluster, you can choose the release name you prefer
 
 ```bash
-helm install <release-name> ./oais-openshift
+helm install <release-name> ./oais-openshift --values=values.yaml
 ```
 
 ## Deploy changes
@@ -75,7 +118,7 @@ helm upgrade <release-name> ./oais-openshift
 
 ## Continuous Deployment
 
-Create a new service account
+To allow a pipeline executor run these commands, without having to authenticate as you, let's create an OpenShift service account:
 
 ```bash
 oc create sa gitlab-ci
@@ -87,7 +130,10 @@ Grant edit permissions to the new service account
 oc policy add-role-to-user edit -z gitlab-ci
 ```
 
-The API token to be used from the CI/CD pipeline is automatically generated and saved in the secrets
+The API token to be used from the CI/CD pipeline is automatically generated and saved in the secrets. Go to the Project details on the OpenShift dashboards, select Secrets and reveal the values from the `gitlab-ci-token` secret. The `token` string can be used in the `oc login` commands.
+
+This token is set as "CI Variable" in GitLab and read it from the pipeline definition.
+
 
 ### Current configuration
 
