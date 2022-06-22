@@ -18,7 +18,7 @@ data:
 
     DEBUG = False
 
-    LOGIN_REDIRECT_URL = "/#/login/callback"
+    LOGIN_REDIRECT_URL = "/login/callback"
 
     DATABASES = {
       "default": {
