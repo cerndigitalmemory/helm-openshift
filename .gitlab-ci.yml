@@ -47,6 +47,9 @@ deploy-dev:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "push"'
   image: ubuntu:20.04
+  environment:
+    name: luteus
+    url: https://dm-luteus.web.cern.ch/
   script:
     - apt-get update
     - apt-get install -y curl
