@@ -1,16 +1,15 @@
 oais:
   checkHostname: true
-  hostname: dm-test1-kostas-chelakis.app.cern.ch
+  hostname: dm-galanos.web.cern.ch
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_master:latest
 
 oidc:
-  clientId: dm-test
+  clientId: dm-galanos
 
 redis:
   persistence:
     enabled: true
     size: 2Gi
-    storageClass: cephfs
 
 postgres:
   db: oais_db
@@ -18,7 +17,6 @@ postgres:
   persistence:
     enabled: true
     size: 5Gi
-    storageClass: cephfs
 
 route:
   enabled: true

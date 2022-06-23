@@ -1,5 +1,3 @@
-# Example values
-
 oais:
   checkHostname: true
   hostname: dm-luteus.web.cern.ch
