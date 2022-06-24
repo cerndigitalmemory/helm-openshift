@@ -80,6 +80,7 @@ oc create secret generic \
   --from-literal="POSTGRESQL_PASSWORD=<password>" \
   --from-literal="DJANGO_SECRET_KEY=<secret key>" \
   --from-literal="OIDC_RP_CLIENT_SECRET=<secret>" \
+  --from-literal="SENTRY_DSN=<value>" \
   oais-secrets
 ```
 
@@ -88,6 +89,7 @@ oc create secret generic \
 | POSTGRESQL_PASSWORD   | Passphrase to login to Postgres. Set as you prefer, but long and safe strings.  |
 | DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                   |
 | OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                            |
+| SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                       |
 
 ### Configuration
 
