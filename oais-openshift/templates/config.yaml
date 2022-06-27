@@ -20,6 +20,10 @@ data:
 
     BIC_UPLOAD_PATH = {{ .Values.oais.sipPath | quote }}
 
+    FILES_URL = "https://new.cernbox.cern.ch/files/spaces/personal/home"
+
+    SIP_UPSTREAM_BASEPATH = BIC_UPLOAD_PATH
+
     LOGIN_REDIRECT_URL = "/login/callback"
 
     DATABASES = {
@@ -33,6 +37,8 @@ data:
     }
 
     __all__ = [
+      "FILES_URL",
+      "SIP_UPSTREAM_BASEPATH",
       "BIC_UPLOAD_PATH",
       "ALLOWED_HOSTS",
       "DEBUG",
