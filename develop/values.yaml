@@ -2,6 +2,7 @@ oais:
   checkHostname: true
   hostname: dm-luteus.web.cern.ch
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
+  sipPath: /eos/user/o/oais/platform-storage/luteus/sips
 
 oidc:
   clientId: dm-luteus

@@ -18,6 +18,8 @@ data:
 
     DEBUG = False
 
+    BIC_UPLOAD_PATH = {{ .Values.oais.sipPath | quote }}
+
     LOGIN_REDIRECT_URL = "/login/callback"
 
     DATABASES = {
@@ -31,6 +33,7 @@ data:
     }
 
     __all__ = [
+      "BIC_UPLOAD_PATH",
       "ALLOWED_HOSTS",
       "DEBUG",
       "LOGIN_REDIRECT_URL",

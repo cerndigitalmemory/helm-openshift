@@ -162,3 +162,9 @@ minikube service --url oais-platform
 - Add support for external PostgreSQL instance (e.g. to use CERN DBoD)
 - Use gunicorn instead of the development server
 - Configure probes
+
+# References
+
+- [PaaS docs @CERN](https://paas.docs.cern.ch/)
+- [Kubernetes@CERN docs](https://kubernetes.docs.cern.ch/)
+- [How to mount an EOS volume on a deployed application](https://paas.docs.cern.ch/3._Storage/eos/)
