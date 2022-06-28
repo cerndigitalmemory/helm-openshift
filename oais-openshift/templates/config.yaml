@@ -20,7 +20,8 @@ data:
 
     BIC_UPLOAD_PATH = {{ .Values.oais.sipPath | quote }}
 
-    FILES_URL = "https://new.cernbox.cern.ch/files/spaces/personal/home"
+    # Finish the URL with a / or the urljoin won't work
+    FILES_URL = "https://new.cernbox.cern.ch/files/spaces/personal/home/"
 
     SIP_UPSTREAM_BASEPATH = BIC_UPLOAD_PATH
 
