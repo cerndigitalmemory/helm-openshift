@@ -67,12 +67,17 @@ data:
       root /shared-assets;
 
       location /ping {
-        return 200 "ok";
+          return 200 "ok";
       }
 
       location / {
-        index index.html;
-        try_files $uri $uri/ /index.html;
+          index index.html;
+          try_files $uri $uri/ /index.html;
+      }
+
+      # Django admin panel
+      location /admin {
+          try_files $uri @proxy_api;
       }
 
       location /api/ {
