@@ -64,23 +64,26 @@ data:
       server_name _;
       {{- end }}
 
-      root /shared-assets;
-
-      location /ping {
-          return 200 "ok";
-      }
-
-      location / {
-          index index.html;
-          try_files $uri $uri/ /index.html;
-      }
-
       # Django admin panel
       location /admin {
           try_files $uri @proxy_api;
       }
 
-      location /api/ {
+       # Point /api paths to the API served by Django
+      location /api {
+          try_files $uri @proxy_api;
+      }
+
+      # Reroute everything else to the React application
+      # and allow clean urls (using BrowserRouter/History API)
+      location / {
+          root /shared-assets;
+          index index.html;
+          try_files $uri $uri/ /index.html;
+      }
+
+      # Reverse proxy for Django
+      location @proxy_api {
           proxy_set_header Host $http_host;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
