@@ -132,9 +132,17 @@ Grant edit permissions to the new service account
 oc policy add-role-to-user edit -z gitlab-ci
 ```
 
-The API token to be used from the CI/CD pipeline is automatically generated and saved in the secrets. Go to the Project details on the OpenShift dashboards, select Secrets and reveal the values from the `gitlab-ci-token` secret. The `token` string can be used in the `oc login` commands.
+The API token to be used from the CI/CD pipeline is automatically generated and saved in the secrets. Go to the Project details on the OpenShift dashboards, select Secrets and select the `gitlab-ci-token-XXXX` secret. The `token` string can be used in the `oc login` commands.
 
 This token is set as "CI Variable" in GitLab and read it from the pipeline definition.
+
+To use a single service account for multiple projects (e.g. in this setup for the two deployments), after logging in with an account that has permissions on both, you can run:
+
+```
+oc policy add-role-to-user admin system:serviceaccount:dm-luteus:gitlab-ci -n dm-galanos
+```
+
+This gives the `gitlab-ci` service account, created in `dm-luteus`, admin permissions also in `dm-galanos` so only 1 token can be used and set up.
 
 
 ### Current configuration
@@ -168,3 +176,4 @@ minikube service --url oais-platform
 - [PaaS docs @CERN](https://paas.docs.cern.ch/)
 - [Kubernetes@CERN docs](https://kubernetes.docs.cern.ch/)
 - [How to mount an EOS volume on a deployed application](https://paas.docs.cern.ch/3._Storage/eos/)
+- [Service accounts in OpenShift](https://docs.openshift.com/container-platform/4.9/authentication/using-service-accounts-in-applications.html)
