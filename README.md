@@ -1,4 +1,39 @@
-# OAIS Platform on OpenShift
+# OAIS Platform on Kubernetes
+
+This repository provides a Helm chart to deploy the CERN Digital Memory [platform](https://gitlab.cern.ch/digitalmemory/oais-platform) on a Kubernetes cluster.
+
+> This setup makes use of some CERN specific technology (EOS volume mounts, SSO) and it's designed for a k8s cluster orchestrated by OpenShift. You may need some modification to make this work on a different stack (e.g. minikube). See [this paragraph](#local-deployment-on-kubernetes) for more information.
+
+Table of contents:
+
+- [Overview](#overview)
+  * [Prerequisites](#prerequisites)
+  * [Clone the repository](#clone-the-repository)
+  * [Docker image](#docker-image)
+    + [Pull](#pull)
+    + [Build yourself](#build-yourself)
+- [Deploy on OpenShift](#deploy-on-openshift)
+  * [Preliminar notes](#preliminar-notes)
+  * [Create an OpenShift project](#create-an-openshift-project)
+    + [Login](#login)
+    + [Secrets](#secrets)
+    + [Configuration](#configuration)
+    + [Install](#install)
+  * [Deploy changes](#deploy-changes)
+- [Continuous Deployment](#continuous-deployment)
+  * [Current configuration](#current-configuration)
+  * [Local deployment on Kubernetes](#local-deployment-on-kubernetes)
+- [References](#references)
+
+# Overview
+
+Here's the structure of this repository:
+
+- `oais-openshift/`, Helm chart and templates
+- `Dockerfile`, to build the base image
+- `develop/`, values for our develop deployment
+- `master/`, values for our stable deployment
+- `.gitlab-ci.yml`, CI/CD pipeline
 
 ## Prerequisites
 
@@ -6,12 +41,17 @@
 - OpenShift Client
 - Docker (if building the image from source)
 
+Download the OpenShift CLI client:
+
 ```bash
-# Download the OpenShift CLI client
 curl https://mirror.openshift.com/pub/openshift-v4/clients/ocp/4.8.4/openshift-client-linux.tar.gz -o oc.tar.gz
 tar -xf oc.tar.gz
 sudo mv ./oc /usr/bin/oc
-# Download Helm
+```
+
+Download Helm:
+
+```
 curl https://get.helm.sh/helm-v3.6.3-linux-amd64.tar.gz -o helm.tar.gz
 tar -xf helm.tar.gz
 sudo mv ./linux-amd64/helm /usr/bin/helm
@@ -19,7 +59,7 @@ sudo mv ./linux-amd64/helm /usr/bin/helm
 
 ## Clone the repository
 
-Clone this repository and change the working directory
+Start by cloning this repository
 
 ```bash
 git clone --recurse-submodules https://gitlab.cern.ch/digitalmemory/openshift-deploy.git
@@ -28,11 +68,21 @@ cd openshift-deploy
 
 ## Docker image
 
-You can use the image uploaded in this repository Docker registry or build one using the provided Dockerfile.
+The main application will be provided by a docker image, defined by the Dockerfile in this repository.
+
+The image:
+
+- Pulls node and any npm requirement for the frontend
+- Generates a static build of the frontend
+- Pulls python and python requirements, preparing an enviroment that will be able to run Django
+
+### Pull
+
+You can pull it from our [Docker containers registry](https://gitlab.cern.ch/digitalmemory/openshift-deploy/container_registry):
 
 ```bash
 # Use the image from this repository registry
-docker run gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais
+docker run gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
 
 # Build the docker image
 docker build --tag <name> .
@@ -41,10 +91,37 @@ docker build --tag <name> .
 docker push <name>
 ```
 
+We provide two "channels" for this image: 
+
+- `oais_dev` is built from `develop` branches of `oais-web` and `oais-platform` (which in turn uses the develop git version of BagIt Create)
+- `oais_master` is built from `master` branches of `oais-web` and `oais-platform` (which in rn uses a tagged released version of BagIt Create)
+
+### Build yourself
+
+You can also build the docker image image yourself. It expects to be built from a context folder where both the backend and frontend are cloned.
+
+E.g.:
+
+```
+git clone ssh://git@gitlab.cern.ch:7999/digitalmemory/oais-platform.git
+git clone ssh://git@gitlab.cern.ch:7999/digitalmemory/oais-web.git
+docker build .
+```
+
+> You can specify the context by passing the `--context` parameter to docker
+
 
 # Deploy on OpenShift
 
 ## Preliminar notes
+
+Some features require additional setup:
+
+- Sentry
+- CERN SSO
+- EOS Volumes
+
+Check the [oais-platform](https://gitlab.cern.ch/digitalmemory/oais-platform) documentation on how to set those up.
 
 To enable CERN SSO, you should:
 
@@ -84,23 +161,22 @@ oc create secret generic \
   oais-secrets
 ```
 
-| Secret name           | Description                                                                     |
-|-----------------------|---------------------------------------------------------------------------------|
-| POSTGRESQL_PASSWORD   | Passphrase to login to Postgres. Set as you prefer, but long and safe strings.  |
-| DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                   |
-| OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                            |
-| SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                       |
+| Secret name           | Description                                                                    |
+| --------------------- | ------------------------------------------------------------------------------ |
+| POSTGRESQL_PASSWORD   | Passphrase to login to Postgres. Set as you prefer, but long and safe strings. |
+| DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                  |
+| OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                           |
+| SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                      |
 
 ### Configuration
 
 Now, let's set some more variables by editing the `values.yaml` file. An example is found in `oais-openshift/values.yaml`.
 
-| Name                  | Description                                                                     |
-|-----------------------|---------------------------------------------------------------------------------|
-| oais/hostname         | Should be set to <openshift_project_name>.web.cern.ch                           |
-| oais/image            | Set as you prefer, but long and safe strings.                                   |
-| oidc/clientId         | From your registered CERN Application, for CERN SSO.                            |
-
+| Name          | Description                                           |
+| ------------- | ----------------------------------------------------- |
+| oais/hostname | Should be set to <openshift_project_name>.web.cern.ch |
+| oais/image    | Set as you prefer, but long and safe strings.         |
+| oidc/clientId | From your registered CERN Application, for CERN SSO.  |
 
 ### Install
 
@@ -118,7 +194,7 @@ After changing any configuration file, update the configuration on the cluster
 helm upgrade <release-name> ./oais-openshift
 ```
 
-## Continuous Deployment
+# Continuous Deployment
 
 To allow a pipeline executor run these commands, without having to authenticate as you, let's create an OpenShift service account:
 
@@ -144,11 +220,10 @@ oc policy add-role-to-user admin system:serviceaccount:dm-luteus:gitlab-ci -n dm
 
 This gives the `gitlab-ci` service account, created in `dm-luteus`, admin permissions also in `dm-galanos` so only 1 token can be used and set up.
 
-
-### Current configuration
+## Current configuration
 
 Whenever new commits are pushed to `oais-web` or `oais-platform`, the pipeline on `openshift-deployment` is triggered to make a new deployment.
-This pipeline creates a new commit on `openshift-deployment` that updates the submodules in the repository.
+This pipeline creates a new commit on `openshift-deployment` that updates the git submodules in the repository.
 After the commit is pushed, the docker image is rebuilt and the configuration is deployed on OpenShift.
 
 ## Local deployment on Kubernetes
@@ -161,15 +236,10 @@ You can test the deployment locally using k8s (e.g. with minikube) by setting th
 - `route.enabled: false`
 
 To access the control interface, add `type: NodePort` to `spec` in the `oais-platform` service and then visit the URL given by
+
 ```bash
 minikube service --url oais-platform
 ```
-
-## TODO
-
-- Add support for external PostgreSQL instance (e.g. to use CERN DBoD)
-- Use gunicorn instead of the development server
-- Configure probes
 
 # References
 
