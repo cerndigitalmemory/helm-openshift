@@ -3,6 +3,9 @@ oais:
   hostname: dm-luteus.web.cern.ch
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
 
+inveniordm:
+  baseUrl: your-invenio-url
+
 oidc:
   clientId: dm-luteus
 

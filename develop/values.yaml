@@ -4,6 +4,9 @@ oais:
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
   sipPath: /eos/user/o/oais/platform-storage/luteus/sips
 
+inveniordm:
+  baseUrl: https://188.185.38.21:5000
+
 oidc:
   clientId: dm-luteus
 

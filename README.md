@@ -154,10 +154,11 @@ We will need to set some secrets for the Django project.
 
 ```bash
 oc create secret generic \
-  --from-literal="POSTGRESQL_PASSWORD=<password>" \
-  --from-literal="DJANGO_SECRET_KEY=<secret key>" \
-  --from-literal="OIDC_RP_CLIENT_SECRET=<secret>" \
+  --from-literal="POSTGRESQL_PASSWORD=<value>" \
+  --from-literal="DJANGO_SECRET_KEY=<value>" \
+  --from-literal="OIDC_RP_CLIENT_SECRET=<value>" \
   --from-literal="SENTRY_DSN=<value>" \
+  --from-literal="INVENIO_API_TOKEN=<value>" \
   oais-secrets
 ```
 
@@ -167,16 +168,18 @@ oc create secret generic \
 | DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                  |
 | OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                           |
 | SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                      |
+| INVENIO_API_TOKEN     | Token to authenticate and publish to the Invenio instance                      |
 
 ### Configuration
 
 Now, let's set some more variables by editing the `values.yaml` file. An example is found in `oais-openshift/values.yaml`.
 
-| Name          | Description                                           |
-| ------------- | ----------------------------------------------------- |
-| oais/hostname | Should be set to <openshift_project_name>.web.cern.ch |
-| oais/image    | Set as you prefer, but long and safe strings.         |
-| oidc/clientId | From your registered CERN Application, for CERN SSO.  |
+| Name               | Description                                           |
+| ------------------ | ----------------------------------------------------- |
+| oais/hostname      | Should be set to <openshift_project_name>.web.cern.ch |
+| oais/image         | Set as you prefer, but long and safe strings.         |
+| oidc/clientId      | From your registered CERN Application, for CERN SSO.  |
+| inveniordm/baseUrl | Base URL of your InvenioRDM instance                  |
 
 ### Install
 
