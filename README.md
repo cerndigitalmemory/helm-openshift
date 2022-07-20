@@ -7,22 +7,22 @@ This repository provides a Helm chart to deploy the CERN Digital Memory [platfor
 Table of contents:
 
 - [Overview](#overview)
-  * [Prerequisites](#prerequisites)
-  * [Clone the repository](#clone-the-repository)
-  * [Docker image](#docker-image)
-    + [Pull](#pull)
-    + [Build yourself](#build-yourself)
+  - [Prerequisites](#prerequisites)
+  - [Clone the repository](#clone-the-repository)
+  - [Docker image](#docker-image)
+    - [Pull](#pull)
+    - [Build yourself](#build-yourself)
 - [Deploy on OpenShift](#deploy-on-openshift)
-  * [Preliminar notes](#preliminar-notes)
-  * [Create an OpenShift project](#create-an-openshift-project)
-    + [Login](#login)
-    + [Secrets](#secrets)
-    + [Configuration](#configuration)
-    + [Install](#install)
-  * [Deploy changes](#deploy-changes)
+  - [Preliminar notes](#preliminar-notes)
+  - [Create an OpenShift project](#create-an-openshift-project)
+    - [Login](#login)
+    - [Secrets](#secrets)
+    - [Configuration](#configuration)
+    - [Install](#install)
+  - [Deploy changes](#deploy-changes)
 - [Continuous Deployment](#continuous-deployment)
-  * [Current configuration](#current-configuration)
-  * [Local deployment on Kubernetes](#local-deployment-on-kubernetes)
+  - [Current configuration](#current-configuration)
+  - [Local deployment on Kubernetes](#local-deployment-on-kubernetes)
 - [References](#references)
 
 # Overview
@@ -68,7 +68,7 @@ cd openshift-deploy
 
 ## Docker image
 
-The main application will be provided by a docker image, defined by the Dockerfile in this repository.
+The main application will be provided by a Docker image, defined by the Dockerfile in this repository.
 
 The image:
 
@@ -78,7 +78,7 @@ The image:
 
 ### Pull
 
-You can pull it from our [Docker containers registry](https://gitlab.cern.ch/digitalmemory/openshift-deploy/container_registry):
+The easiest option is to pull it from our [Docker containers registry](https://gitlab.cern.ch/digitalmemory/openshift-deploy/container_registry):
 
 ```bash
 # Use the image from this repository registry
@@ -91,14 +91,14 @@ docker build --tag <name> .
 docker push <name>
 ```
 
-We provide two "channels" for this image: 
+We provide two "channels" for this image:
 
 - `oais_dev` is built from `develop` branches of `oais-web` and `oais-platform` (which in turn uses the develop git version of BagIt Create)
 - `oais_master` is built from `master` branches of `oais-web` and `oais-platform` (which in rn uses a tagged released version of BagIt Create)
 
 ### Build yourself
 
-You can also build the docker image image yourself. It expects to be built from a context folder where both the backend and frontend are cloned.
+You can also build the Docker image image yourself. It expects to be built from a context folder where both the backend and frontend are cloned.
 
 E.g.:
 
@@ -108,8 +108,7 @@ git clone ssh://git@gitlab.cern.ch:7999/digitalmemory/oais-web.git
 docker build .
 ```
 
-> You can specify the context by passing the `--context` parameter to docker
-
+> You can specify the context by passing the `--context` parameter to the Docker command
 
 # Deploy on OpenShift
 
@@ -120,17 +119,9 @@ Some features require additional setup:
 - Sentry
 - CERN SSO
 - EOS Volumes
+- InvenioRDM integration
 
 Check the [oais-platform](https://gitlab.cern.ch/digitalmemory/oais-platform) documentation on how to set those up.
-
-To enable CERN SSO, you should:
-
-- Create an Application at <https://application-portal.web.cern.ch>
-- Select the application and create a new "Open ID Connect (OIDC)" CERN SSO Registration
-- Fill in the values considering that the final exposed Base URL will be `<openshift_project_name>.web.cern.ch`
-- Note the client secret (`OIDC_RP_CLIENT_SECRET`) and the **Client ID**.
-
-More information can be found [here](https://auth.docs.cern.ch/user-documentation/oidc/oidc/).
 
 ## Create an OpenShift project
 
@@ -148,9 +139,20 @@ oc login --token=<token> --server=https://api.paas.okd.cern.ch
 oc project <project>
 ```
 
+## Configuration
+
+Now, let's set some more variables by editing the `values.yaml` file. An example is found in `oais-openshift/values.yaml`.
+
+| Name               | Description                                           |
+| ------------------ | ----------------------------------------------------- |
+| oais/hostname      | Should be set to <openshift_project_name>.web.cern.ch |
+| oais/image         | Set as you prefer, but long and safe strings.         |
+| oidc/clientId      | From your registered CERN Application, for CERN SSO.  |
+| inveniordm/baseUrl | Base URL of your InvenioRDM instance                  |
+
 ### Secrets
 
-We will need to set some secrets for the Django project.
+Some other configuration values need to be set as secrets.
 
 ```bash
 oc create secret generic \
@@ -162,26 +164,15 @@ oc create secret generic \
   oais-secrets
 ```
 
-| Secret name           | Description                                                                    |
-| --------------------- | ------------------------------------------------------------------------------ |
-| POSTGRESQL_PASSWORD   | Passphrase to login to Postgres. Set as you prefer, but long and safe strings. |
-| DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                  |
-| OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                           |
-| SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                      |
-| INVENIO_API_TOKEN     | Token to authenticate and publish to the Invenio instance                      |
+| Secret name           | Description                                                                                  |
+| --------------------- | -------------------------------------------------------------------------------------------- |
+| POSTGRESQL_PASSWORD   | Passphrase to login to Postgres. Set as you prefer, but long and safe strings.               |
+| DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                                |
+| OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                                         |
+| SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                                    |
+| INVENIO_API_TOKEN     | Token to authenticate and publish to the InvenioRDM instance specified in inveniordm/baseUrl |
 
-### Configuration
-
-Now, let's set some more variables by editing the `values.yaml` file. An example is found in `oais-openshift/values.yaml`.
-
-| Name               | Description                                           |
-| ------------------ | ----------------------------------------------------- |
-| oais/hostname      | Should be set to <openshift_project_name>.web.cern.ch |
-| oais/image         | Set as you prefer, but long and safe strings.         |
-| oidc/clientId      | From your registered CERN Application, for CERN SSO.  |
-| inveniordm/baseUrl | Base URL of your InvenioRDM instance                  |
-
-### Install
+## Install
 
 Deploy the platform on the cluster, you can choose the release name you prefer
 
@@ -229,6 +220,12 @@ Whenever new commits are pushed to `oais-web` or `oais-platform`, the pipeline o
 This pipeline creates a new commit on `openshift-deployment` that updates the git submodules in the repository.
 After the commit is pushed, the docker image is rebuilt and the configuration is deployed on OpenShift.
 
+This behaviour is defined in the `.gitlab-ci.yml` file of the following repositories:
+
+- [openshift-deploy](https://gitlab.cern.ch/digitalmemory/openshift-deploy/-/blob/develop/.gitlab-ci.yml)
+- [oais-platform](https://gitlab.cern.ch/digitalmemory/oais-platform/-/blob/develop/.gitlab-ci.yml)
+- [oais-web](https://gitlab.cern.ch/digitalmemory/oais-web/-/blob/develop/.gitlab-ci.yml)
+
 ## Local deployment on Kubernetes
 
 You can test the deployment locally using k8s (e.g. with minikube) by setting the following values in `oais-openshift/values.yaml`:
@@ -246,7 +243,7 @@ minikube service --url oais-platform
 
 # References
 
-- [PaaS docs @CERN](https://paas.docs.cern.ch/)
+- [PaaS@CERN docs](https://paas.docs.cern.ch/)
 - [Kubernetes@CERN docs](https://kubernetes.docs.cern.ch/)
-- [How to mount an EOS volume on a deployed application](https://paas.docs.cern.ch/3._Storage/eos/)
+- [PaaS@CERN: How to mount an EOS volume on a deployed application](https://paas.docs.cern.ch/3._Storage/eos/)
 - [Service accounts in OpenShift](https://docs.openshift.com/container-platform/4.9/authentication/using-service-accounts-in-applications.html)
