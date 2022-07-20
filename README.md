@@ -16,9 +16,9 @@ Table of contents:
   - [Preliminar notes](#preliminar-notes)
   - [Create an OpenShift project](#create-an-openshift-project)
     - [Login](#login)
+  - [Configuration](#configuration)
     - [Secrets](#secrets)
-    - [Configuration](#configuration)
-    - [Install](#install)
+  - [Install](#install)
   - [Deploy changes](#deploy-changes)
 - [Continuous Deployment](#continuous-deployment)
   - [Current configuration](#current-configuration)
@@ -93,8 +93,10 @@ docker push <name>
 
 We provide two "channels" for this image:
 
-- `oais_dev` is built from `develop` branches of `oais-web` and `oais-platform` (which in turn uses the develop git version of BagIt Create)
-- `oais_master` is built from `master` branches of `oais-web` and `oais-platform` (which in rn uses a tagged released version of BagIt Create)
+| Channel     | Oais-web branch | Oais-platform branch | BagIt-Create branch     |
+|-------------|-----------------|----------------------|-------------------------|
+| oais_dev    | develop         | develop              | git/develop version     |
+| oais_master | master          | master               | tagged released version |
 
 ### Build yourself
 
@@ -164,13 +166,14 @@ oc create secret generic \
   oais-secrets
 ```
 
-| Secret name           | Description                                                                                  |
-| --------------------- | -------------------------------------------------------------------------------------------- |
-| POSTGRESQL_PASSWORD   | Passphrase to login to Postgres. Set as you prefer, but long and safe strings.               |
-| DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                                |
-| OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                                         |
-| SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                                    |
-| INVENIO_API_TOKEN     | Token to authenticate and publish to the InvenioRDM instance specified in inveniordm/baseUrl |
+| Secret name           | Description                                                                                    |
+| --------------------- | ---------------------------------------------------------------------------------------------- |
+| POSTGRESQL_PASSWORD   | Passphrase to login to Postgres. Set as you prefer, but long and safe strings.                 |
+| DJANGO_SECRET_KEY     | Set as you prefer, but long and safe strings.                                                  |
+| OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                                           |
+| SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                                      |
+| INVENIO_API_TOKEN     | Token to authenticate and publish to the InvenioRDM instance specified in `inveniordm/baseUrl` |
+|  |
 
 ## Install
 
