@@ -20,6 +20,7 @@ Table of contents:
     - [Secrets](#secrets)
   - [Install](#install)
   - [Deploy changes](#deploy-changes)
+  - [Delete volumes](#delete-volumes)
 - [Continuous Deployment](#continuous-deployment)
   - [Current configuration](#current-configuration)
   - [Local deployment on Kubernetes](#local-deployment-on-kubernetes)
@@ -190,6 +191,15 @@ After changing any configuration file, update the configuration on the cluster
 ```bash
 helm upgrade <release-name> ./oais-openshift
 ```
+
+## Delete volumes
+
+If you need to delete persistent volume claims (e.g. to reset the DB), after having deleted it from the OpenShift web UI, run:
+
+```bash
+oc patch pvc postgres-pvc -p '{"metadata":{"finalizers":null}}'
+```
+
 
 # Continuous Deployment
 
