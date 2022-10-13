@@ -96,7 +96,7 @@ docker push <name>
 We provide two "channels" for this image:
 
 | Channel     | Oais-web branch | Oais-platform branch | BagIt-Create branch     |
-|-------------|-----------------|----------------------|-------------------------|
+| ----------- | --------------- | -------------------- | ----------------------- |
 | oais_dev    | develop         | develop              | git/develop version     |
 | oais_master | master          | master               | tagged released version |
 
@@ -124,8 +124,9 @@ Some features require additional setup:
 - CERN SSO
 - EOS Volumes
 - InvenioRDM integration
+- Archivematica
 
-Check the [oais-platform](https://gitlab.cern.ch/digitalmemory/oais-platform) documentation on how to set those up.
+Check also the [oais-platform](https://gitlab.cern.ch/digitalmemory/oais-platform) documentation on how to set those up.
 
 ## Create an OpenShift project
 
@@ -145,14 +146,15 @@ oc project <project>
 
 ## Configuration
 
-Now, let's set some more variables by editing the `values.yaml` file. An example is found in `oais-openshift/values.yaml`.
+First, let's set some configuration variables by editing the `values.yaml` file. An example is found in `oais-openshift/values.yaml`.
 
-| Name               | Description                                           |
-| ------------------ | ----------------------------------------------------- |
-| oais/hostname      | Should be set to <openshift_project_name>.web.cern.ch |
-| oais/image         | Set as you prefer, but long and safe strings.         |
-| oidc/clientId      | From your registered CERN Application, for CERN SSO.  |
-| inveniordm/baseUrl | Base URL of your InvenioRDM instance                  |
+| Name               | Description                                                                     |
+| ------------------ | ------------------------------------------------------------------------------- |
+| oais/hostname      | Should be set to <openshift_project_name>.web.cern.ch                           |
+| oais/image         | Set as you prefer, but long and safe strings.                                   |
+| oidc/clientId      | From your registered CERN Application, for CERN SSO.                            |
+| inveniordm/baseUrl | Base URL of your InvenioRDM instance                                            |
+| oais/sipPath       | Base path where SIPs will be created and uploaded. Must exist and be writeable. |
 
 ### Secrets
 
@@ -175,7 +177,6 @@ oc create secret generic \
 | OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                                           |
 | SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                                      |
 | INVENIO_API_TOKEN     | Token to authenticate and publish to the InvenioRDM instance specified in `inveniordm/baseUrl` |
-|  |
 
 ## Install
 
@@ -185,6 +186,33 @@ Deploy the platform on the cluster, you can choose the release name you prefer
 helm install <release-name> ./oais-openshift --values=values.yaml
 ```
 
+### EOS
+
+If you plan to use EOS (e.g. for the sipPath), you need some additional steps. Please refer to [PaaS@CERN: How to mount an EOS volume on a deployed application](https://paas.docs.cern.ch/3._Storage/eos/) to learn more.
+
+First, you need to provide the credentials of a CERN account able to read/write from those folders on EOS:
+
+```
+oc create secret generic
+  --from-literal="KEYTAB_USER=<USERNAME>"
+  --from-literal="KEYTAB_PWD=<PASSWORD>"
+  eos-credentials
+```
+
+Then, inject the authentication sidecar to the Django and Celery deployments:
+
+```
+oc patch deploy/oais-platform -p '{"spec":{"template":{"metadata":{"annotations":{"eos.okd.cern.ch/mount-eos-with-credentials-from-secret":"eos-credentials"}}}}}'
+
+oc patch deploy/celery -p '{"spec":{"template":{"metadata":{"annotations":{"eos.okd.cern.ch/mount-eos-with-credentials-from-secret":"eos-credentials"}}}}}'
+```
+
+Finally, attach a PVC to the django deployment:
+
+```
+oc set volume deployment/oais-platform --add --name=eos --type=persistentVolumeClaim --mount-path=/eos --claim-name=eos-volume-celery --claim-class=eos --claim-size=1
+```
+
 ## Deploy changes
 
 After changing any configuration file, update the configuration on the cluster
@@ -192,15 +220,6 @@ After changing any configuration file, update the configuration on the cluster
 ```bash
 helm upgrade <release-name> ./oais-openshift
 ```
-
-## Delete volumes
-
-If you need to delete persistent volume claims (e.g. to reset the DB), after having deleted it from the OpenShift web UI, run:
-
-```bash
-oc patch pvc postgres-pvc -p '{"metadata":{"finalizers":null}}'
-```
-
 
 # Continuous Deployment
 
