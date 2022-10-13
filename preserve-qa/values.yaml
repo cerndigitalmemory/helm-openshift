@@ -1,0 +1,27 @@
+oais:
+  checkHostname: true
+  hostname: preserve-qa.web.cern.ch
+  image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
+  sipPath: /eos/user/o/oais/platform-storage/preserve-qa/sips
+
+inveniordm:
+  baseUrl: https://188.185.38.21:5000
+
+oidc:
+  clientId: preserve-qa
+
+redis:
+  persistence:
+    enabled: true
+    size: 2Gi
+
+postgres:
+  db: oais_db
+  user: oais
+  persistence:
+    enabled: true
+    size: 5Gi
+
+route:
+  enabled: true
+  tls: true

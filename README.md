@@ -32,8 +32,9 @@ Here's the structure of this repository:
 
 - `oais-openshift/`, Helm chart and templates
 - `Dockerfile`, to build the base image
-- `develop/`, values for our develop deployment
-- `master/`, values for our stable deployment
+- `develop/`, values for our **develop** deployment (luteus)
+- `master/`, values for our **stable** deployment (galanos)
+- `preserve-qa/`, values for our **preserve-qa** deployment
 - `.gitlab-ci.yml`, CI/CD pipeline
 
 ## Prerequisites
