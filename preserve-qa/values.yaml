@@ -3,6 +3,16 @@ oais:
   hostname: preserve-qa.web.cern.ch
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
   sipPath: /eos/user/o/oais/platform-storage/preserve-qa/sips
+  aipPath: /eos/user/o/oais/platform-storage/preserve-qa/aips
+
+archivematica:
+  archivematica_url: https://preserve-qa-am.web.cern.ch
+  am_abs_directory: /eos/user/o/oais/platform-storage/preserve-qa/sips
+  am_rel_directory: /
+  am_username: archivematica
+  am_ss_url: https://preserve-qa-am-ss.web.cern.ch
+  am_ss_username: archivematica_ss
+  am_transfer_source_uuid: 150c6918-5a9c-46c9-a3a3-9410ae7674be
 
 inveniordm:
   baseUrl: https://188.185.38.21:5000
