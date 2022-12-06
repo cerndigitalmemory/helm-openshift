@@ -3,6 +3,7 @@ oais:
   hostname: dm-galanos.web.cern.ch
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_master:latest
   sipPath: /eos/user/o/oais/platform-storage/galanos/sips
+  aipPath: /eos/user/o/oais/platform-storage/galanos/aips
 
 oidc:
   clientId: dm-galanos

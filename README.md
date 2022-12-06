@@ -24,6 +24,7 @@ Table of contents:
 - [Continuous Deployment](#continuous-deployment)
   - [Current configuration](#current-configuration)
   - [Local deployment on Kubernetes](#local-deployment-on-kubernetes)
+- [Archivematica integration](#archivematica-integration)
 - [References](#references)
 
 # Overview
@@ -167,6 +168,8 @@ oc create secret generic \
   --from-literal="OIDC_RP_CLIENT_SECRET=<value>" \
   --from-literal="SENTRY_DSN=<value>" \
   --from-literal="INVENIO_API_TOKEN=<value>" \
+  --from-literal="AM_API_KEY" \
+  --from-literal="AM_SS_API_KEY" \
   oais-secrets
 ```
 
@@ -177,6 +180,9 @@ oc create secret generic \
 | OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                                           |
 | SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                                      |
 | INVENIO_API_TOKEN     | Token to authenticate and publish to the InvenioRDM instance specified in `inveniordm/baseUrl` |
+| AM_API_KEY            | Token to authenticate to archivematica dashboard specified in `username > Your Profile > Users` |
+| AM_SS_API_KEY         | Token to authenticate to archivematica storage service specified in `username > Your Profile > Users` |
+|  |
 
 ## Install
 
@@ -193,9 +199,9 @@ If you plan to use EOS (e.g. for the sipPath), you need some additional steps. P
 First, you need to provide the credentials of a CERN account able to read/write from those folders on EOS:
 
 ```
-oc create secret generic
-  --from-literal="KEYTAB_USER=<USERNAME>"
-  --from-literal="KEYTAB_PWD=<PASSWORD>"
+oc create secret generic \
+  --from-literal="KEYTAB_USER=<USERNAME>" \
+  --from-literal="KEYTAB_PWD=<PASSWORD>" \
   eos-credentials
 ```
 
@@ -258,6 +264,32 @@ This behaviour is defined in the `.gitlab-ci.yml` file of the following reposito
 - [openshift-deploy](https://gitlab.cern.ch/digitalmemory/openshift-deploy/-/blob/develop/.gitlab-ci.yml)
 - [oais-platform](https://gitlab.cern.ch/digitalmemory/oais-platform/-/blob/develop/.gitlab-ci.yml)
 - [oais-web](https://gitlab.cern.ch/digitalmemory/oais-web/-/blob/develop/.gitlab-ci.yml)
+
+# Archivematica integration
+
+To integrate archivematica with the platform modify the variables in your `values.yaml` file
+
+* **AM_URL**: Url that hosts archivematica dashboard
+* **AM_USERNAME**: Archivematica user name
+* **AM_SS_URL**: Url that hosts archivematica storage service
+* **AM_SS_USERNAME**: Archivematica storage service user name
+* **AM_TRANSFER_SOURCE**: Add the uuid of the transfer source (at Storage service go to Locations and copy the UUID of the transfer source location)
+
+
+## Additional configuration
+
+When you have deployed archivematica, you need to make sure that both archivematica and the platform have read/write access on the same folder. To do this you need to specify the following 
+values in your `values.yaml` file
+
+* `oais.sipPath`: The directory where the platform stores the created SIPs
+* `oais.aipPath`: The directory where the platform expects the AIPs from archivematica
+* `archivematica.am_abs_directory`: The directory where archivematica expects the SIPs from the platform (must be the same with `oais.sipPath`)
+
+In addition the Transfer Source and AIPStorage locations must be configured manually from the Storage Service by going to `Locations` tab and on the AIPStorage purpose row click the `Edit` action. 
+
+In the `Relative Path` text area put the AIP path (the one used above in the `oais.aipPath` field) and make sure archivematica and the platform have read/write access to it. Click the `Edit Location` button at the bottom of the page to save the configuration.
+
+ The same steps must be followed for the Transfer Source purpose row but you need to put the SIP path instead.
 
 ## Local deployment on Kubernetes
 

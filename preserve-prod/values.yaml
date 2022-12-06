@@ -1,0 +1,37 @@
+oais:
+  checkHostname: true
+  hostname: preserve.web.cern.ch
+  image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
+  sipPath: /eos/user/o/oais/platform-storage/preserve/sips
+  aipPath: /eos/user/o/oais/platform-storage/preserve/aips
+
+archivematica:
+  archivematica_url: https://preserve-qa-am.web.cern.ch
+  am_abs_directory: /eos/user/o/oais/platform-storage/preserve/sips
+  am_rel_directory: /
+  am_username: archivematica
+  am_ss_url: https://preserve-qa-am-ss.web.cern.ch
+  am_ss_username: archivematica_ss
+  am_transfer_source_uuid: 150c6918-5a9c-46c9-a3a3-9410ae7674be
+
+inveniordm:
+  baseUrl: https://188.185.38.21:5000
+
+oidc:
+  clientId: preserve-prod
+
+redis:
+  persistence:
+    enabled: true
+    size: 2Gi
+
+postgres:
+  db: oais_db
+  user: oais
+  persistence:
+    enabled: true
+    size: 5Gi
+
+route:
+  enabled: true
+  tls: true

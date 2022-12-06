@@ -3,6 +3,16 @@ oais:
   hostname: dm-luteus.web.cern.ch
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
   sipPath: /eos/user/o/oais/platform-storage/luteus/sips
+  aipPath: /eos/user/o/oais/platform-storage/luteus/aips
+
+archivematica:
+  archivematica_url: https://dm-am.web.cern.ch
+  am_abs_directory: /eos/user/o/oais/platform-storage/luteus/sips
+  am_rel_directory: /
+  am_username: archivematica
+  am_ss_url: https://dm-am-ss.web.cern.ch
+  am_ss_username: archivematica
+  am_transfer_source_uuid: df6dc27a-d928-4394-a4de-37074fa9cc86
 
 inveniordm:
   baseUrl: https://188.185.38.21:5000

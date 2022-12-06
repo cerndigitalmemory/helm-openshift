@@ -2,6 +2,18 @@ oais:
   checkHostname: true
   hostname: dm-luteus.web.cern.ch
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
+  sipPath: /path-to-sip
+  aipPath: /path-to-aip
+
+archivematica:
+  archivematica_url: https://dashboard-url.com
+  am_abs_directory: /path-to-sip
+  am_rel_directory: /path-to-sip
+  am_username: archivematica
+  am_ss_url: https://storage-service-url.com
+  am_ss_username: archivematica
+  am_transfer_source_uuid: transfer-uuid
+
 
 inveniordm:
   baseUrl: your-invenio-url

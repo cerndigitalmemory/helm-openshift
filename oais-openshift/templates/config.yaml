@@ -24,6 +24,7 @@ data:
     FILES_URL = "https://new.cernbox.cern.ch/files/spaces/"
 
     SIP_UPSTREAM_BASEPATH = BIC_UPLOAD_PATH
+    AIP_UPSTREAM_BASEPATH = {{ .Values.oais.aipPath | quote }}
 
     LOGIN_REDIRECT_URL = "/login/callback"
 
@@ -37,16 +38,46 @@ data:
       }
     }
 
+    # Url that hosts the archivematica dashboard
+    AM_URL = {{ .Values.archivematica.archivematica_url | quote }}
+
+    # Username and api key of archivematica user
+    AM_USERNAME = {{ .Values.archivematica.am_username | quote }}
+    AM_API_KEY = os.environ["AM_API_KEY"]
+
+    # Url that hosts the archivematica storage service
+    AM_SS_URL = {{ .Values.archivematica.am_ss_url | quote }}
+
+    # Username and api key of archivematica storage service user
+    AM_SS_USERNAME = {{ .Values.archivematica.am_ss_username | quote }}
+    AM_SS_API_KEY = os.environ["AM_SS_API_KEY"]
+
+    # Archivematica transfer source uuid 
+    AM_TRANSFER_SOURCE = {{ .Values.archivematica.am_transfer_source_uuid | quote }}
+
+    AM_ABS_DIRECTORY = {{ .Values.archivematica.am_abs_directory | quote }}
+    AM_REL_DIRECTORY = {{ .Values.archivematica.am_rel_directory | quote }}
+
     __all__ = [
       "FILES_URL",
       "SIP_UPSTREAM_BASEPATH",
+      "AIP_UPSTREAM_BASEPATH",
       "BIC_UPLOAD_PATH",
       "ALLOWED_HOSTS",
       "DEBUG",
       "LOGIN_REDIRECT_URL",
       "SECURE_PROXY_SSL_HEADER",
       "SECRET_KEY",
-      "DATABASES"
+      "DATABASES",
+      "AM_URL",
+      "AM_USERNAME",
+      "AM_API_KEY",
+      "AM_SS_URL",
+      "AM_SS_USERNAME",
+      "AM_SS_API_KEY",
+      "AM_TRANSFER_SOURCE",
+      "AM_ABS_DIRECTORY" ,
+      "AM_REL_DIRECTORY",
     ]
 ---
 apiVersion: v1
