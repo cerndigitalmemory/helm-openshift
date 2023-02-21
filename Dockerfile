@@ -32,7 +32,8 @@ RUN apk add --update \
   tk-dev \
   zlib-dev \
   # to allow pip install dependencies from git repositories
-  git 
+  git \
+  swig
 
 WORKDIR /oais-platform
 COPY ./oais-platform/requirements.txt ./
