@@ -6,6 +6,8 @@ data:
   __init__.py: |
     import os
 
+    # Set variables to the values passed to the chart
+
     SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
     {{- if .Values.oais.checkHostname }}
@@ -40,26 +42,27 @@ data:
       }
     }
 
-    # Url that hosts the archivematica dashboard
     AM_URL = {{ .Values.archivematica.archivematica_url | quote }}
-
-    # Username and api key of archivematica user
     AM_USERNAME = {{ .Values.archivematica.am_username | quote }}
     AM_API_KEY = os.environ["AM_API_KEY"]
-
-    # Url that hosts the archivematica storage service
     AM_SS_URL = {{ .Values.archivematica.am_ss_url | quote }}
-
-    # Username and api key of archivematica storage service user
     AM_SS_USERNAME = {{ .Values.archivematica.am_ss_username | quote }}
     AM_SS_API_KEY = os.environ["AM_SS_API_KEY"]
-
-    # Archivematica transfer source uuid 
     AM_TRANSFER_SOURCE = {{ .Values.archivematica.am_transfer_source_uuid | quote }}
-
     AM_ABS_DIRECTORY = {{ .Values.archivematica.am_abs_directory | quote }}
     AM_REL_DIRECTORY = {{ .Values.archivematica.am_rel_directory | quote }}
 
+    FTS_INSTANCE = {{ .Values.fts.instance | quote }}
+    CTA_BASE_PATH = {{ .Values.cta.base_path | quote }}
+
+    # Those two files are mounted from the secret "grid-credentials"
+    # The paths are set in the volume and volumeMounts details of the oais-platform service 
+    # (oais-platform.yaml)
+    FTS_GRID_CERT = /etc/certificates/public.pem
+    FTS_GRID_CERT_KEY = /etc/certificates/private.key
+
+    # This file is imported at the end of Django's settings.py,
+    #  adding the variables to the "__all__" namespace will make them override everything else.
     __all__ = [
       "FILES_URL",
       "SIP_UPSTREAM_BASEPATH",
@@ -80,6 +83,10 @@ data:
       "AM_TRANSFER_SOURCE",
       "AM_ABS_DIRECTORY" ,
       "AM_REL_DIRECTORY",
+      "FTS_INSTANCE",
+      "FTS_GRID_CERT",
+      "FTS_GRID_CERT_KEY",
+      "CTA_BASE_PATH"
     ]
 ---
 apiVersion: v1
