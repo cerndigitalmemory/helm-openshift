@@ -1,3 +1,5 @@
+# EXAMPLE values to deploy the oais-platform
+
 oais:
   checkHostname: true
   hostname: dm-luteus.web.cern.ch
@@ -14,6 +16,11 @@ archivematica:
   am_ss_username: archivematica
   am_transfer_source_uuid: transfer-uuid
 
+fts:
+  instance: https://fts3-pilot.cern.ch:8446
+
+cta:
+  base_path: root://eosctapublicpps.cern.ch//eos/ctapublicpps/archivetest/digital-memory/
 
 inveniordm:
   baseUrl: your-invenio-url
