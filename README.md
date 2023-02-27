@@ -192,6 +192,17 @@ Deploy the platform on the cluster, you can choose the release name you prefer
 helm install <release-name> ./oais-openshift --values=values.yaml
 ```
 
+### FTS
+
+You need the public and private (passwordless) parts of a Grid certificate to authenticate with FTS. More information can be [found here](https://gitlab.cern.ch/digitalmemory/oais-platform#fts).
+
+```
+oc create secret generic \
+  --from-file=public=<PATH_TO_THE_PUBLIC_PART> \
+  --from-file=private=<PATH_TO_THE_PRIVATE_PART> \
+  grid-certificates
+```
+
 ### EOS
 
 If you plan to use EOS (e.g. for the sipPath), you need some additional steps. Please refer to [PaaS@CERN: How to mount an EOS volume on a deployed application](https://paas.docs.cern.ch/3._Storage/eos/) to learn more.
