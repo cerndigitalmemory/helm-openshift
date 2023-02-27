@@ -50,6 +50,9 @@ spec:
             - mountPath: /oais-platform/oais_platform/local_settings
               name: oais-platform-config
               readOnly: true
+            - name: grid-certificates
+              mountPath: "/etc/certificates"
+              readOnly: true
           imagePullPolicy: Always
 
         - name: nginx
@@ -81,4 +84,12 @@ spec:
           emptyDir: {}
         - name: var-run
           emptyDir: {}
+        - name: grid-certificates
+          secret:
+            secretName: grid-certificates
+            items:
+            - key: public
+              path: public.pem
+            - key: private
+              path: private.key
       restartPolicy: Always
