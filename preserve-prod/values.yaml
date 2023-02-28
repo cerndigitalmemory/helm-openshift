@@ -12,7 +12,7 @@ archivematica:
   am_username: archivematica
   am_ss_url: https://preserve-qa-am-ss.web.cern.ch
   am_ss_username: archivematica_ss
-  am_transfer_source_uuid: 150c6918-5a9c-46c9-a3a3-9410ae7674be
+  am_transfer_source_uuid: e487e0a6-b167-41db-9362-25156dee7a58
 
 inveniordm:
   baseUrl: https://oais-registry.web.cern.ch
