@@ -58,8 +58,8 @@ data:
     # Those two files are mounted from the secret "grid-credentials"
     # The paths are set in the volume and volumeMounts details of the oais-platform service 
     # (oais-platform.yaml)
-    FTS_GRID_CERT = /etc/certificates/public.pem
-    FTS_GRID_CERT_KEY = /etc/certificates/private.key
+    FTS_GRID_CERT = "/etc/certificates/public.pem"
+    FTS_GRID_CERT_KEY = "/etc/certificates/private.key"
 
     # This file is imported at the end of Django's settings.py,
     #  adding the variables to the "__all__" namespace will make them override everything else.
