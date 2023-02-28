@@ -119,15 +119,17 @@ docker build .
 
 ## Preliminar notes
 
-Some features require additional setup:
+Some features may require additional setup:
 
 - Sentry
 - CERN SSO
 - EOS Volumes
-- InvenioRDM integration
+- InvenioRDM
 - Archivematica
+- CTA and FTS
 
-Check also the [oais-platform](https://gitlab.cern.ch/digitalmemory/oais-platform) documentation on how to set those up.
+> This section will be focusing on k8s/openshift-related configuration steps and in what way they should be combined. Details on how to obtain the values and set up the configurable features won't be covered here: refer to the configurations paragraphs on the [backend](https://gitlab.cern.ch/digitalmemory/oais-platform), [frontend](https://gitlab.cern.ch/digitalmemory/oais-web) and [Archivematica](https://gitlab.cern.ch/digitalmemory/archivematica-helm/#configuration) documentation.
+
 
 ## Create an OpenShift project
 
@@ -168,8 +170,8 @@ oc create secret generic \
   --from-literal="OIDC_RP_CLIENT_SECRET=<value>" \
   --from-literal="SENTRY_DSN=<value>" \
   --from-literal="INVENIO_API_TOKEN=<value>" \
-  --from-literal="AM_API_KEY" \
-  --from-literal="AM_SS_API_KEY" \
+  --from-literal="AM_API_KEY=<value>" \
+  --from-literal="AM_SS_API_KEY=<value>" \
   oais-secrets
 ```
 
@@ -180,17 +182,31 @@ oc create secret generic \
 | OIDC_RP_CLIENT_SECRET | From your registered CERN Application, for CERN SSO.                                           |
 | SENTRY_DSN            | SENTRY_DSN value from your Sentry project                                                      |
 | INVENIO_API_TOKEN     | Token to authenticate and publish to the InvenioRDM instance specified in `inveniordm/baseUrl` |
-| AM_API_KEY            | Token to authenticate to archivematica dashboard specified in `username > Your Profile > Users` |
-| AM_SS_API_KEY         | Token to authenticate to archivematica storage service specified in `username > Your Profile > Users` |
-|  |
+| AM_API_KEY            | Token to authenticate to archivematica **dashboard** specified in `username > Your Profile > Users` |
+| AM_SS_API_KEY         | Token to authenticate to archivematica **storage service** specified in `username > Your Profile > Users` |
 
 ## Install
 
-Deploy the platform on the cluster, you can choose the release name you prefer
+Deploy the platform on the cluster. Choose the release name you prefer.
 
 ```bash
-helm install <release-name> ./oais-openshift --values=values.yaml
+helm install <RELEASE_NAME> ./oais-openshift --values=values.yaml
 ```
+
+## Update configuration
+
+If you changed the chart or the values:
+
+```bash
+# Select the project
+oc project
+# List releases
+helm list
+# Upgrade
+helm upgrade <RELEASE_NAME> ./oais-openshift --values=values.yaml
+```
+
+By default, this won't re-pull of the images.
 
 ### FTS
 
