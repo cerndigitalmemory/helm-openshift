@@ -289,18 +289,40 @@ To integrate archivematica with the platform modify the variables in your `value
 
 ## Additional configuration
 
-When you have deployed archivematica, you need to make sure that both archivematica and the platform have read/write access on the same folder. To do this you need to specify the following 
-values in your `values.yaml` file
+When you have deployed archivematica, you need to make sure that both archivematica and the platform have read/write access on the same folder. To do this you need to specify the following values in your `values.yaml` file
 
 * `oais.sipPath`: The directory where the platform stores the created SIPs
 * `oais.aipPath`: The directory where the platform expects the AIPs from archivematica
 * `archivematica.am_abs_directory`: The directory where archivematica expects the SIPs from the platform (must be the same with `oais.sipPath`)
 
-In addition the Transfer Source and AIPStorage locations must be configured manually from the Storage Service by going to `Locations` tab and on the AIPStorage purpose row click the `Edit` action. 
+### Make sure Archivematica has access to the eos volume
+
+You should've run similar steps as the one listed [in the EOS paragraph of this document](#EOS) to mount the EOS volume in Archivematica too.
+
+```
+oc patch deploy/archivematica-all -p '{"spec":{"template":{"metadata":{"annotations":{"eos.okd.cern.ch/mount-eos-with-credentials-from-secret":"eos-credentials"}}}}}'
+```
+
+```
+oc set volume deployment/archivematica-all --add --name=eos --type=persistentVolumeClaim --mount-path=/eos --claim-name=eos-volume --claim-class=eos --claim-size=1
+```
+
+
+### "AIP Storage" (SS Locations) must be set to `oais.aipPath`
+
+In addition the Transfer Source and AIPStorage locations must be configured manually from the **Storage Service** by going to `Locations` tab and on the `AIP Storage` purpose row click the `Edit` action. 
 
 In the `Relative Path` text area put the AIP path (the one used above in the `oais.aipPath` field) and make sure archivematica and the platform have read/write access to it. Click the `Edit Location` button at the bottom of the page to save the configuration.
 
- The same steps must be followed for the Transfer Source purpose row but you need to put the SIP path instead.
+### "Transfer Source" (SS Locations) must be set to `oais.aipPath`
+
+The same steps must be followed for the `Transfer Source` purpose row but you need to put the SIP path instead.
+
+### Set a quota for SS "Internal Processing"
+
+Go to `Spaces`, click `View Details and Locations` and edit `Storage Service Internal Processing`. Set quota to 1000000 (10GB) as this will be preallocated and we don't want to exceed what the PVC attached to the pod has been reserved (see archivematica-k8s for details)
+
+
 
 ## Local deployment on Kubernetes
 
