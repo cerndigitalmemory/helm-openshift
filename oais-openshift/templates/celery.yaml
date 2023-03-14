@@ -34,9 +34,20 @@ spec:
             - mountPath: /oais-platform/oais_platform/local_settings
               name: oais-platform-config
               readOnly: true
+            - name: grid-certificates
+              mountPath: "/etc/certificates"
+              readOnly: true
           imagePullPolicy: Always
       volumes:
         - name: oais-platform-config
           configMap:
             name: oais-platform-config
+        - name: grid-certificates
+          secret:
+            secretName: grid-certificates
+            items:
+            - key: public
+              path: public.pem
+            - key: private
+              path: private.key
       restartPolicy: Always
