@@ -4,6 +4,7 @@ oais:
   image: gitlab-registry.cern.ch/digitalmemory/openshift-deploy/oais_dev:latest
   sipPath: /eos/user/o/oais/platform-storage/preserve/sips
   aipPath: /eos/user/o/oais/platform-storage/preserve/aips
+  allowLocalAuth: False
 
 archivematica:
   archivematica_url: https://preserve-qa-am.web.cern.ch

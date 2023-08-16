@@ -18,6 +18,8 @@ data:
 
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
+    ALLOW_LOCAL_LOGIN = {{ .Values.oais.allowLocalAuth }}
+
     DEBUG = False
 
     BIC_UPLOAD_PATH = {{ .Values.oais.sipPath | quote }}
@@ -86,7 +88,8 @@ data:
       "FTS_INSTANCE",
       "FTS_GRID_CERT",
       "FTS_GRID_CERT_KEY",
-      "CTA_BASE_PATH"
+      "CTA_BASE_PATH",
+      "ALLOW_LOCAL_LOGIN"
     ]
 ---
 apiVersion: v1
