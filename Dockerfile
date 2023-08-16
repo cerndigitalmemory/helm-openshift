@@ -3,7 +3,7 @@ WORKDIR /oais-web
 COPY ./oais-web .
 RUN npm i npm --global && npm install --force && npm run build
 
-FROM python:3.7-alpine
+FROM python:3.11-alpine
 ENV PYTHONUNBUFFERED 1
 RUN apk add --update \
   build-base \
